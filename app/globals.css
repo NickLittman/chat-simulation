@@ -67,3 +67,14 @@ body {
   background-color: #ff4500; /* Orange color for user messages */
   color: white;
 }
+
+.github-icon {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  /* Other styles */
+}
+
+.github-icon:hover {
+  color: #4183C4; /* Color when hovered */
+}

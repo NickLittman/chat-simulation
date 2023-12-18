@@ -6,6 +6,7 @@ import {
   getRandomColor,
 } from "../utils/generateRandom.js";
 import "../globals.css";
+import { FaGithub } from "react-icons/fa";
 
 const ChatSimulation = () => {
   const [message, setMessage] = useState("");
@@ -14,6 +15,7 @@ const ChatSimulation = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false); // State for controlling the toast visibility
   const [showMoment, setShowMoment] = useState(true); // State for controlling the moment visibility
+
   const chatWindowRef = useRef(null);
   const messageIntervalRef = useRef(null);
 
@@ -187,6 +189,15 @@ const ChatSimulation = () => {
             </button>
           </div>
         </div>
+        <a
+          href="https://github.com/NickLittman/chat-simulation"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Fork me on GitHub"
+          className="text-gray-800 hover:text-blue-600" 
+        >
+          <FaGithub className="text-4xl" />
+        </a>
       </div>
     </div>
   );
