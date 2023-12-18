@@ -8,6 +8,7 @@ import {
 import "../globals.css";
 import { FaGithub } from "react-icons/fa";
 
+
 const ChatSimulation = () => {
   const [message, setMessage] = useState("");
   const [messageRate, setMessageRate] = useState(10);
@@ -88,7 +89,7 @@ const ChatSimulation = () => {
       appendMessage(generateRandomMessage());
     }, intervalTime);
 
-    setToastMessage(`Message Rate Spiked to ${5 * previousRate} mps`);
+    setToastMessage(`⭐⭐⭐Big moment! Message Rate Spiked to ${5 * previousRate} mps⭐⭐⭐`);
     setShowToast(true);
     setShowMoment(false);
 
@@ -121,11 +122,15 @@ const ChatSimulation = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 dark:bg-gray-800">
       <div className="flex justify-center">
         <div className="w-full md:w-2/3 lg:w-1/2">
-          {showToast && <div className="toast">{toastMessage}</div>}
-          <div ref={chatWindowRef} className="overflow-y-auto h-96 mb-4">
+          {showToast && (
+            <div className="toast dark:bg-gray-700 dark:text-white">
+              {toastMessage}
+            </div>
+          )}
+          <div ref={chatWindowRef} className="overflow-y-auto h-96 mb-4 bg-white dark:bg-gray-900">
             {/* Chat bubbles will be appended here */}
           </div>
           <div className="flex items-center">
@@ -134,7 +139,7 @@ const ChatSimulation = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="chat-input"
+              className="chat-input bg-gray-100 dark:bg-gray-700 dark:text-white"
               placeholder="Type your message..."
             />
             <button
@@ -145,7 +150,9 @@ const ChatSimulation = () => {
             </button>
           </div>
           <div className="mt-4 flex items-center">
-            <label className="font-semibold mr-2">Message rate:</label>
+            <label className="font-semibold mr-2 text-gray-800 dark:text-gray-200">
+              Message rate:
+            </label>
             <input
               type="range"
               min="1"
@@ -154,15 +161,15 @@ const ChatSimulation = () => {
               onChange={(e) => setMessageRate(e.target.value)}
               className="slider"
             />
-            <span className="ml-2 border border-gray-300 rounded p-1 text-center w-16">
+            <span className="ml-2 border border-gray-300 dark:border-gray-600 rounded p-1 text-center w-16 text-gray-800 dark:text-gray-200">
               {messageRate}
             </span>
-            <span className="ml-2 text-gray-500 text-sm">
+            <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">
               messages per second
             </span>
           </div>
           <div className="mt-4">
-            {showMoment && simulationState == "running" && (
+            {simulationState === "running" && (
               <button
                 onClick={handleCreateMoment}
                 className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full"
@@ -172,11 +179,7 @@ const ChatSimulation = () => {
             )}
 
             <button
-              onClick={
-                simulationState === "running"
-                  ? handlePauseResume
-                  : startSimulation
-              }
+              onClick={simulationState === "running" ? handlePauseResume : startSimulation}
               className={`ml-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full`}
             >
               {simulationState === "running" ? "Pause" : "Start"} Simulation
@@ -194,7 +197,7 @@ const ChatSimulation = () => {
           target="_blank"
           rel="noopener noreferrer"
           title="Fork me on GitHub"
-          className="text-gray-800 hover:text-blue-600" 
+          className="text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400"
         >
           <FaGithub className="text-4xl" />
         </a>

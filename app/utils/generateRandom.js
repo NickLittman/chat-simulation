@@ -93,7 +93,6 @@ const comments = [
     "I'm literally shaking",
     "Can't stop watching",
     "Let's goooo!",
-    "This is why I love Twitch",
     "I need that skin!",
     "Best streamer ever",
     "How do you even do that?",
@@ -154,7 +153,7 @@ const comments = [
     "I'm totally hooked",
     "This is gaming at its finest",
     "I'm here for the long haul",
-    "This is the best part of Twitch",
+    "This is the best part of my week",
     "I'm amazed every time",
     "This is non-stop action",
     "I'm a true believer",
@@ -162,7 +161,7 @@ const comments = [
     "I'm a dedicated viewer",
     "This is the pinnacle of entertainment",
     "I'm totally immersed",
-    "This is the essence of Twitch",
+    "This is the best stream ever",
     "I'm a part of something special",
     "This is gaming history",
     "I'm here for every stream",
@@ -170,7 +169,7 @@ const comments = [
     "I'm a committed follower",
     "This is the heart of gaming",
     "I'm a true fan",
-    "This is the soul of Twitch",
+    "This is the soul of legendary gameplay",
     "I'm forever a supporter",
     "This is the zenith of streaming",
     "I'm all in",
@@ -178,7 +177,7 @@ const comments = [
     "I'm here to stay",
     "This is the apex of gaming",
     "I'm a permanent member",
-    "This is the epitome of Twitch"]
+    "This is the epitome of gaming"]
 
   const getRandomElement = (arr) => {
     const index = Math.floor(Math.random() * arr.length);
