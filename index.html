@@ -1,188 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .chat-bubble {
-            background-color: #f3f4f6;
-            padding: 8px 12px;
-            border-radius: 16px;
-            margin-bottom: 8px;
-            max-width: 75%;
+      .message-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+      .chat-bubble {
+        background-color: #f3f4f6;
+        padding: 8px 12px;
+        border-radius: 16px;
+        margin-bottom: 8px;
+        max-width: 75%;
+      }
+      .chat-input {
+        border-radius: 9999px;
+        padding: 8px 16px;
+        border: 1px solid #d1d5db;
+        width: calc(100% - 32px);
+      }
+      .toast {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: fadeOut 5s;
+      }
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
         }
-        .chat-input {
-            border-radius: 9999px;
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            width: calc(100% - 32px);
+        to {
+          opacity: 0;
         }
-        .message-rate-button {
-            background-color: #e5e7eb;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            margin-right: 4px;
-            cursor: pointer;
-        }
-        .message-rate-button.active {
-            background-color: #3b82f6;
-            color: white;
-        }
+      }
     </style>
-</head>
-<body class="bg-white text-gray-800">
+  </head>
+  <body class="bg-white text-gray-800">
     <div class="container mx-auto p-4">
-        <div class="flex justify-center">
-            <div class="w-full md:w-2/3 lg:w-1/2">
-                <div class="border p-4 rounded-lg">
-                    <div id="chatWindow" class="overflow-y-auto h-96 mb-4">
-                        <!-- Chat bubbles will be appended here -->
-                    </div>
-                    <div class="flex items-center">
-                        <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
-                        <button id="sendMessage" class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                            &gt;
-                        </button>
-                    </div>
-                    <div class="mt-4">
-                        <span class="font-semibold">Message rate:</span>
-                        <div id="messageRateButtons" class="mt-2">
-                            <button class="message-rate-button active" data-rate="10">10</button>
-                            <button class="message-rate-button" data-rate="50">50</button>
-                            <button class="message-rate-button" data-rate="100">100</button>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <button id="startSimulation" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full">
-                            Start Simulation
-                        </button>
-                        <button id="stopSimulation" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
-                            Stop Simulation
-                        </button>
-                    </div>
-                </div>
+      <div class="flex justify-center">
+        <div class="w-full md:w-2/3 lg:w-1/2">
+          <div class="border p-4 rounded-lg relative">
+            <div id="chatWindow" class="overflow-y-auto h-96 mb-4">
+              <!-- Chat bubbles will be appended here -->
             </div>
+            <div class="flex items-center">
+              <input
+                type="text"
+                id="chatInput"
+                class="chat-input"
+                placeholder="Type your message..."
+              />
+              <button
+                id="sendMessage"
+                class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                &gt;
+              </button>
+            </div>
+            <div class="mt-4 flex items-center">
+              <label for="messageRateSlider" class="font-semibold mr-2"
+                >Message rate:</label
+              >
+              <input
+                type="range"
+                id="messageRateSlider"
+                min="1"
+                max="200"
+                value="10"
+                class="slider"
+              />
+              <input
+                type="text"
+                id="currentRate"
+                class="ml-2 border border-gray-300 rounded p-1 text-center w-16"
+                readonly
+              />
+            </div>
+            <div class="mt-4">
+              <button
+                id="createMoment"
+                class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Create Moment
+              </button>
+            </div>
+            <div class="mt-4">
+              <button
+                id="startSimulation"
+                class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Start Simulation
+              </button>
+              <button
+                id="stopSimulation"
+                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Stop Simulation
+              </button>
+              <button
+                id="pauseResumeSimulation"
+                class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Pause Simulation
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
     <script>
-        const chatWindow = document.getElementById('chatWindow');
-        const chatInput = document.getElementById('chatInput');
-        const sendMessageButton = document.getElementById('sendMessage');
-        const messageRateButtons = document.querySelectorAll('.message-rate-button');
-        const startSimulationButton = document.getElementById('startSimulation');
-        const stopSimulationButton = document.getElementById('stopSimulation');
+      const chatWindow = document.getElementById("chatWindow");
+      const chatInput = document.getElementById("chatInput");
+      const sendMessageButton = document.getElementById("sendMessage");
+      const startSimulationButton = document.getElementById("startSimulation");
+      const stopSimulationButton = document.getElementById("stopSimulation");
+      const pauseResumeSimulationButton = document.getElementById(
+        "pauseResumeSimulation"
+      );
+      const messageRateSlider = document.getElementById("messageRateSlider");
+      const currentRateDisplay = document.getElementById("currentRate");
+      const createMomentButton = document.getElementById("createMoment");
 
-        let messageRate = 10; // Default message rate
-        let messageInterval;
+      let messageRate = 10; 
+      let messageInterval;
+      let isPaused = false;
 
-        function appendMessage(message) {
-            const bubble = document.createElement('div');
-            bubble.className = 'chat-bubble';
-            bubble.textContent = message;
-            chatWindow.appendChild(bubble);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+      function appendMessage(message) {
+        const bubble = document.createElement("div");
+        bubble.className = "chat-bubble";
+        bubble.textContent = message;
+
+
+        const label = document.createElement("span");
+        label.textContent = `${generateRandomUser()}`;
+        label.style.fontWeight = "bold";
+        label.style.marginRight = "10px"; 
+
+        const messageContainer = document.createElement("div");
+        messageContainer.className = "message-container";
+        messageContainer.appendChild(label);
+        messageContainer.appendChild(bubble);
+
+        chatWindow.appendChild(messageContainer);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+
+      function createToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.textContent = message;
+        chatWindow.appendChild(toast);
+        setTimeout(() => chatWindow.removeChild(toast), 5000);
+      }
+
+      sendMessageButton.addEventListener("click", () => {
+        const message = chatInput.value.trim();
+        if (message) {
+          appendMessage(message);
+          chatInput.value = "";
         }
+      });
 
-        sendMessageButton.addEventListener('click', () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                appendMessage(message);
-                chatInput.value = '';
-            }
-        });
-
-        function startMessageGeneration(rate) {
-            if (messageInterval) clearInterval(messageInterval);
-            const intervalTime = 1000 / rate; // Convert rate to interval time
-            messageInterval = setInterval(() => {
-                appendMessage(generateRandomMessage());
-            }, intervalTime);
+      function startMessageGeneration(rate) {
+        if (messageInterval) clearInterval(messageInterval);
+        if (!isPaused) {
+          const intervalTime = 1000 / rate;
+          messageInterval = setInterval(() => {
+            appendMessage(generateRandomMessage());
+          }, intervalTime);
         }
+      }
 
-        function toggleMessageRateButtons(enable) {
-            messageRateButtons.forEach((button) => {
-                button.disabled = !enable;
-            });
+      messageRateSlider.addEventListener("input", () => {
+        messageRate = parseInt(messageRateSlider.value, 10);
+        currentRateDisplay.value = messageRate;
+        if (!isPaused) {
+          startMessageGeneration(messageRate);
         }
+      });
 
-        messageRateButtons.forEach((button) => {
-            button.addEventListener('click', () => {
-                messageRateButtons.forEach((btn) => btn.classList.remove('active'));
-                button.classList.add('active');
-                messageRate = parseInt(button.getAttribute('data-rate'), 10);
-            });
-        });
+      pauseResumeSimulationButton.addEventListener("click", () => {
+        isPaused = !isPaused;
+        pauseResumeSimulationButton.textContent = isPaused
+          ? "Resume Simulation"
+          : "Pause Simulation";
+        if (isPaused) {
+          clearInterval(messageInterval);
+        } else {
+          startMessageGeneration(messageRate);
+        }
+      });
 
-        startSimulationButton.addEventListener('click', () => {
+      createMomentButton.addEventListener("click", () => {
+        startMessageGeneration(messageRate * 5);
+        createToast(`Message Rate Spiked to ${messageRate * 5} mps`);
+        setTimeout(() => {
+          if (!isPaused) {
             startMessageGeneration(messageRate);
-            toggleMessageRateButtons(false);
-        });
+          }
+        }, 2000);
+      });
 
-        stopSimulationButton.addEventListener('click', () => {
-            if (messageInterval) clearInterval(messageInterval);
-            chatWindow.innerHTML = ''; // Clear chat messages
-            toggleMessageRateButtons(true);
-        });
+      startSimulationButton.addEventListener("click", () => {
+        startMessageGeneration(messageRate);
+      });
 
-        function generateRandomMessage() {
+      stopSimulationButton.addEventListener("click", () => {
+        if (messageInterval) clearInterval(messageInterval);
+        chatWindow.innerHTML = ""; // Clear chat messages
+      });
+
+      function generateRandomUser() {
+        const usernames = [
+          "Luffgirl",
+          "Cute_Sugarr",
+          "Sweet_Sparrow",
+          "The Inner Thing",
+          "Etiolate",
+          "Luciform",
+          "Pie_Sweetness",
+          "Oodles",
+          "Bloom Kitty",
+          "Nickbrinashipper",
+          "Apropos",
+          "Love_Insta",
+          "Autumn Soul",
+          "Moon_Up",
+          "Cute Energy",
+          "Corner To Corner",
+          "Moongirl",
+          "Smother Queen",
+          "Jasmine",
+          "Doll Stall",
+          "Emaciate",
+          "Teen_Rose",
+          "Top_Command",
+          "Glue Stu",
+          "Fcstomper",
+          "Chiaroscuro",
+          "Geez God",
+          "Locomate",
+          "Speckled Dudess",
+          "Genialkeebz",
+          "Lovestump",
+          "Hyper Zoom",
+          "Doggondivis",
+          "Funambulist",
+          "Dream Girl",
+          "Evil Weevil",
+          "Bold_Style",
+          "Bold_Touch",
+          "Thought Motel",
+          "Piggy_Honeybear",
+          "Cyber Floss Lord",
+          "Awesome_Girls",
+          "Glam Angel",
+          "Zombie Guide",
+          "Muffinhead",
+          "Pixel Anatomy",
+          "Honey_Bell",
+          "Purrienne_",
+          "Sweet_Quail",
+          "Summer Rain",
+          "Caramel Cookie",
+          "Whokissgirl",
+          "Solacegirl",
+          "Vergiform",
+          "Bag Of Swag",
+          "Cheeseinabag",
+          "Mind Light",
+          "Hug Me Tight",
+          "Dragon Pie",
+          "Olive Over Everything",
+          "Rotten Disco Balls",
+          "Wonky Buzz",
+          "Apogee Point",
+          "Yeah_Me",
+          "Partycrasher",
+          "Lemon Cupcake",
+          "The Family Knot",
+          "Panic_Point",
+          "Sugar Momma",
+          "Yautiagirl",
+          "Angel_Doll",
+          "Cislunar Doll",
+          "Fluffycookie",
+          "Shine Tin Molecules",
+          "The Laidback Squirrel",
+          "Goinggirl",
+          "Sugar Free Diva",
+          "Awkward Pink Stance",
+          "Gold Unseen",
+          "Posiripple",
+          "Trendyschoolgirl",
+          "Heyyounotyouyou",
+          "Basket Of Dreams",
+          "Happy In My Hut",
+          "New Pole Meteorite",
+          "Coriolis Extreme",
+          "Divellent",
+          "Respected",
+          "Mostloved_Name",
+          "Peafowl",
+          "Starry Divinity",
+          "Blue Thrill Bonzo",
+          "Brain Drain Babe",
+          "Doggie",
+          "Awesome_Chocolate",
+          "Pizza Topping Girl",
+          "Top_To_Follow",
+          "Cookie Angel",
+          "Amazesgo0507",
+          "Fly Like A Rat",
+          "Droolbug",
+          "Rainbow_Colours",
+          "Lovely_Lights",
+          "Shadow_Of_Love",
+          "Hellohell",
+          "Little Gorilla",
+          "Meat_Duck",
+          "Youarealienated",
+          "Peppermint_Kisses",
+          "Mocha Ooze",
+          "Laurelwas",
+          "Dolly_Dolphin",
+          "Lyk Demon",
+          "Brain Storm Angel",
+          "Operaoflife",
+          "Girlgaze",
+          "Unforgiving Spleen",
+          "Imported Sense",
+          "Cute_Sugar",
+          "Greed Hound",
+          "Paralogism",
+          "Firewalk Prophesy",
+          "Torrentine",
+          "Fantastic Fun",
+          "Star_Belt",
+          "Twinklinglights",
+          "Singlemuffin",
+          "Clown4u",
+          "Dream Cloud Fiesta",
+          "Smile_Somewhat",
+          "Angelic Quest",
+          "Coolchipz",
+          "Butterscotch Seven",
+          "Spoolgirl",
+          "Egoflash",
+          "Igczarevna",
+          "Lovely_Dear",
+          "Honey_Pot",
+          "Glue Heart",
+          "Angelberri",
+          "Sleepy_World",
+          "Bloom Thing",
+        ];
+        const getRandomElement = (arr) => {
+          const index = Math.floor(Math.random() * arr.length);
+          return arr[index];
+        };
+        let user = getRandomElement(usernames);
+        return user;
+      }
+
+      function generateRandomMessage() {
         const emojis = [
-          '👽',
-          '🐉',
-          '🦄',
-          '🔥',
-          '💎',
-          '🌀',
-          '🌈',
-          '🍄',
-          '🦠',
-          '🦖',
-          '🦕',
-          '🌌',
-          '🍭',
-          '🍬',
-          '🍩',
-          '💡',
-          '🎠',
-          '🛸',
-          '🚀',
-          '🎃',
-          '🤖',
-          '🔮',
-          '🦑',
-          '🦀',
-          '🌪',
-          '🌙',
-          '⭐',
-          '🌠',
-          '💣',
-          '🎉',
-          '🍕',
-          '🍔',
-          '🍟',
-          '🍺',
-          '🍣',
-          '🎲',
-          '🧩',
-          '🎮',
-          '🎨',
-          '🎭',
-          '🎷',
-          '🎸',
-          '🎻',
-          '🔊',
-          '🎧',
-          '🧙‍♂️',
-          '🧚‍♀️',
-          '🧜‍♂️',
-          '🧞‍♀️',
-          '🧟‍♂️',
+          "👽",
+          "🐉",
+          "🦄",
+          "🔥",
+          "💎",
+          "🌀",
+          "🌈",
+          "🍄",
+          "🦠",
+          "🦖",
+          "🦕",
+          "🌌",
+          "🍭",
+          "🍬",
+          "🍩",
+          "💡",
+          "🎠",
+          "🛸",
+          "🚀",
+          "🎃",
+          "🤖",
+          "🔮",
+          "🦑",
+          "🦀",
+          "🌪",
+          "🌙",
+          "⭐",
+          "🌠",
+          "💣",
+          "🎉",
+          "🍕",
+          "🍔",
+          "🍟",
+          "🍺",
+          "🍣",
+          "🎲",
+          "🧩",
+          "🎮",
+          "🎨",
+          "🎭",
+          "🎷",
+          "🎸",
+          "🎻",
+          "🔊",
+          "🎧",
+          "🧙‍♂️",
+          "🧚‍♀️",
+          "🧜‍♂️",
+          "🧞‍♀️",
+          "🧟‍♂️",
         ];
 
         const characters =
-          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         const getRandomElement = (arr) => {
           const index = Math.floor(Math.random() * arr.length);
@@ -190,7 +436,7 @@
         };
 
         const getRandomString = (length) => {
-          let result = '';
+          let result = "";
           for (let i = 0; i < length; i++) {
             result += getRandomElement(characters);
           }
@@ -202,6 +448,8 @@
         const emoji = getRandomElement(emojis);
         return `${randomString} ${emoji}`;
       }
+
+      currentRateDisplay.value = messageRate;
     </script>
-</body>
+  </body>
 </html>
