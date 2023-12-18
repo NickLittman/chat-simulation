@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-bubble {
+            background-color: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            max-width: 75%;
+        }
+        .chat-input {
+            border-radius: 9999px;
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            width: calc(100% - 32px);
+        }
+        .message-rate-button {
+            background-color: #e5e7eb;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-right: 4px;
+            cursor: pointer;
+        }
+        .message-rate-button.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div class="container mx-auto p-4">
+        <div class="flex justify-center">
+            <div class="w-full md:w-2/3 lg:w-1/2">
+                <div class="border p-4 rounded-lg">
+                    <div id="chatWindow" class="overflow-y-auto h-96 mb-4">
+                        <!-- Chat bubbles will be appended here -->
+                    </div>
+                    <div class="flex items-center">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+                        <button id="sendMessage" class="ml-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                            &gt;
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <span class="font-semibold">Message rate:</span>
+                        <div id="messageRateButtons" class="mt-2">
+                            <button class="message-rate-button active" data-rate="10">10</button>
+                            <button class="message-rate-button" data-rate="50">50</button>
+                            <button class="message-rate-button" data-rate="100">100</button>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button id="startSimulation" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full">
+                            Start Simulation
+                        </button>
+                        <button id="stopSimulation" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
+                            Stop Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chatWindow');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessageButton = document.getElementById('sendMessage');
+        const messageRateButtons = document.querySelectorAll('.message-rate-button');
+        const startSimulationButton = document.getElementById('startSimulation');
+        const stopSimulationButton = document.getElementById('stopSimulation');
+
+        let messageRate = 10; // Default message rate
+        let messageInterval;
+
+        function appendMessage(message) {
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.textContent = message;
+            chatWindow.appendChild(bubble);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        sendMessageButton.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                appendMessage(message);
+                chatInput.value = '';
+            }
+        });
+
+        function startMessageGeneration(rate) {
+            if (messageInterval) clearInterval(messageInterval);
+            const intervalTime = 1000 / rate; // Convert rate to interval time
+            messageInterval = setInterval(() => {
+                appendMessage(generateRandomMessage());
+            }, intervalTime);
+        }
+
+        function toggleMessageRateButtons(enable) {
+            messageRateButtons.forEach((button) => {
+                button.disabled = !enable;
+            });
+        }
+
+        messageRateButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                messageRateButtons.forEach((btn) => btn.classList.remove('active'));
+                button.classList.add('active');
+                messageRate = parseInt(button.getAttribute('data-rate'), 10);
+            });
+        });
+
+        startSimulationButton.addEventListener('click', () => {
+            startMessageGeneration(messageRate);
+            toggleMessageRateButtons(false);
+        });
+
+        stopSimulationButton.addEventListener('click', () => {
+            if (messageInterval) clearInterval(messageInterval);
+            chatWindow.innerHTML = ''; // Clear chat messages
+            toggleMessageRateButtons(true);
+        });
+
+        function generateRandomMessage() {
+        const emojis = [
+          '👽',
+          '🐉',
+          '🦄',
+          '🔥',
+          '💎',
+          '🌀',
+          '🌈',
+          '🍄',
+          '🦠',
+          '🦖',
+          '🦕',
+          '🌌',
+          '🍭',
+          '🍬',
+          '🍩',
+          '💡',
+          '🎠',
+          '🛸',
+          '🚀',
+          '🎃',
+          '🤖',
+          '🔮',
+          '🦑',
+          '🦀',
+          '🌪',
+          '🌙',
+          '⭐',
+          '🌠',
+          '💣',
+          '🎉',
+          '🍕',
+          '🍔',
+          '🍟',
+          '🍺',
+          '🍣',
+          '🎲',
+          '🧩',
+          '🎮',
+          '🎨',
+          '🎭',
+          '🎷',
+          '🎸',
+          '🎻',
+          '🔊',
+          '🎧',
+          '🧙‍♂️',
+          '🧚‍♀️',
+          '🧜‍♂️',
+          '🧞‍♀️',
+          '🧟‍♂️',
+        ];
+
+        const characters =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        const getRandomElement = (arr) => {
+          const index = Math.floor(Math.random() * arr.length);
+          return arr[index];
+        };
+
+        const getRandomString = (length) => {
+          let result = '';
+          for (let i = 0; i < length; i++) {
+            result += getRandomElement(characters);
+          }
+          return result;
+        };
+
+        const randomLength = Math.floor(Math.random() * 20);
+        const randomString = getRandomString(randomLength);
+        const emoji = getRandomElement(emojis);
+        return `${randomString} ${emoji}`;
+      }
+    </script>
+</body>
+</html>
