@@ -11,7 +11,7 @@ import { FaGithub } from "react-icons/fa";
 
 const ChatSimulation = () => {
   const [message, setMessage] = useState("");
-  const [messageRate, setMessageRate] = useState(10);
+  const [messageRate, setMessageRate] = useState(5);
   const [simulationState, setSimulationState] = useState("stopped"); // 'stopped', 'running', 'paused'
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false); // State for controlling the toast visibility
