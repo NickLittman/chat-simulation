@@ -176,7 +176,7 @@ const ChatSimulation = () => {
         </div>
       </div>
       <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
-        {simulationState === "running" && showMoment === 'true'(
+        {simulationState === "running" && showMoment && (
           <button
             onClick={handleCreateMoment}
             className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
