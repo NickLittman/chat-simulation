@@ -162,9 +162,14 @@ const ChatSimulation = () => {
             onChange={(e) => setMessageRate(e.target.value)}
             className="slider flex-grow"
           />
-          <span className="ml-2 border border-gray-300 dark:border-gray-600 rounded p-1 text-center w-16">
-            {messageRate}
-          </span>
+          <input
+            type="number"
+            min="1"
+            max="200"
+            value={messageRate}
+            onChange={(e) => setMessageRate(e.target.value)}
+            className="ml-2 border border-gray-300 dark:border-gray-600 rounded p-1 text-center w-16"
+          />
           <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">
             messages per second
           </span>
