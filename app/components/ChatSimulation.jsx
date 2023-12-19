@@ -168,7 +168,7 @@ const ChatSimulation = () => {
             max="200"
             value={messageRate}
             onChange={(e) => setMessageRate(e.target.value)}
-            className="ml-2 border border-gray-300 dark:border-gray-600 rounded p-1 text-center w-16"
+            className="ml-2 border border-gray-300 dark:border-gray-600 dark:text-gray-700 rounded p-1 text-center w-16"
           />
           <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">
             messages per second
@@ -176,7 +176,7 @@ const ChatSimulation = () => {
         </div>
       </div>
       <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
-        {simulationState === "running" && (
+        {simulationState === "running" && showMoment === 'true'(
           <button
             onClick={handleCreateMoment}
             className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
