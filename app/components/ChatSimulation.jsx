@@ -89,7 +89,7 @@ const ChatSimulation = () => {
     }, intervalTime);
 
     setToastMessage(
-      `⭐⭐⭐Big moment! Message Rate Spiked to ${5 * previousRate} mps⭐⭐⭐`
+      `Big moment! Message Rate Spiked to ${5 * previousRate} mps`
     );
     setShowToast(true);
     setShowMomentButton(false);
@@ -127,19 +127,20 @@ const ChatSimulation = () => {
       <div className="flex flex-col justify-center items-center space-y-4">
         <div className="w-full sm:w-2/3 lg:w-1/2">
           {showToast && (
-            <div className="toast mb-4 text-center text-sm bg-gray-200 dark:bg-gray-700 dark:text-white rounded">
-              <span className="rainbow-text" style={{ fontSize: "20px" }}>
-                {toastMessage}
-              </span>
+            <div className="toast mb-4 text-center bg-gray-200 dark:bg-gray-700 dark:text-white rounded">
+              <span className="pulsing-text gradient-text">{toastMessage}</span>
             </div>
           )}
 
           <div
             ref={chatWindowRef}
-            className="overflow-y-auto h-96 mb-4 bg-white dark:bg-gray-900 rounded-lg p-4"
+            className={`overflow-y-auto h-96 mb-4 bg-white dark:bg-gray-900 rounded-lg p-4 ${
+              showToast ? "animated-border" : ""
+            }`}
           >
             {/* Chat bubbles will be appended here */}
           </div>
+
           <div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-4">
             <input
               type="text"
@@ -151,11 +152,14 @@ const ChatSimulation = () => {
             />
             <button
               onClick={handleSendMessage}
+              disabled={showToast}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
+              title={showToast ? "Sending is disabled during the moment" : ""}
             >
               Send
             </button>
           </div>
+
           <div className="mt-4">
             <label className="font-semibold text-gray-800 dark:text-gray-200">
               Message rate:
@@ -167,7 +171,13 @@ const ChatSimulation = () => {
                 max="200"
                 value={messageRate}
                 onChange={(e) => setMessageRate(e.target.value)}
+                disabled={showToast}
                 className="slider flex-grow"
+                title={
+                  showToast
+                    ? "Adjusting rate is disabled during the moment"
+                    : ""
+                }
               />
               <input
                 type="number"
@@ -175,45 +185,63 @@ const ChatSimulation = () => {
                 max="200"
                 value={messageRate}
                 onChange={(e) => setMessageRate(e.target.value)}
+                disabled={showToast}
                 className="ml-2 border border-gray-300 dark:border-gray-600 dark:text-gray-700 rounded p-1 text-center w-16"
+                title={
+                  showToast
+                    ? "Adjusting rate is disabled during the moment"
+                    : ""
+                }
               />
               <span className="ml-2 text-gray-500 dark:text-gray-400 text-sm">
                 messages per second
               </span>
             </div>
           </div>
+
           <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-4">
-            {simulationState === "running" && showMomentButton && (
-              <button
-                onClick={handleCreateMoment}
-                className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
-              >
-                Create Moment
-              </button>
-            )}
-            {showMomentButton && (
-              <div>
-                <button
-                  onClick={
-                    simulationState === "running"
-                      ? handlePauseResume
-                      : startSimulation
-                  }
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
-                >
-                  {simulationState === "running" ? "Pause" : "Start"} Simulation
-                </button>
-                <button
-                  onClick={handleStopSimulation}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
-                >
-                  Stop Simulation
-                </button>
-              </div>
-            )}
+            {}
+            <button
+              onClick={handleCreateMoment}
+              disabled={showToast}
+              hidden={!showMomentButton || simulationState != "running"}
+              className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
+              title={
+                showToast
+                  ? "Creating a moment is disabled during the moment"
+                  : ""
+              }
+            >
+              Create Moment
+            </button>
+            <button
+              onClick={
+                simulationState === "running"
+                  ? handlePauseResume
+                  : startSimulation
+              }
+              disabled={showToast}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
+              title={
+                showToast
+                  ? "Pausing/Starting is disabled during the moment"
+                  : ""
+              }
+            >
+              {simulationState === "running" ? "Pause" : "Start"} Simulation
+            </button>
+            <button
+              onClick={handleStopSimulation}
+              disabled={showToast}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full transition-colors"
+              title={showToast ? "Stopping is disabled during the moment" : ""}
+            >
+              Stop Simulation
+            </button>
           </div>
         </div>
       </div>
+
       <a
         href="https://github.com/NickLittman/chat-simulation"
         target="_blank"

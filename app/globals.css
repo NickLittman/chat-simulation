@@ -79,16 +79,45 @@ body {
 }
 
 @keyframes rainbowText {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.rainbow-text {
-  background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+
+.gradient-text {
+  font-size: 18px; /* Adjust size as needed */
+  background: linear-gradient(28deg, #E40000 25%, #FF5416 75%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  animation: rainbowText 5s ease infinite;
-  background-size: 200% 200%;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.4); /* White shadow for contrast */
 }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.pulsing-text {
+  animation: pulse 1s infinite;
+}
+
+
+
+@keyframes hueRotateBorder {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.animated-border {
+  border: 4px solid transparent;
+  border-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet) 1;
+  animation: hueRotateBorder 1s linear infinite;
+}
+
+ 
