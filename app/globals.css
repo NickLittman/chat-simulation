@@ -77,3 +77,18 @@ body {
 .github-icon:hover {
   color: #4183C4; /* Color when hovered */
 }
+
+@keyframes rainbowText {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+.rainbow-text {
+  background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: rainbowText 5s ease infinite;
+  background-size: 200% 200%;
+}
